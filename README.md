@@ -1,5 +1,5 @@
-#### BS
+# BS
 ## BRITAINIA SECURITY 
 
-# INSTALLATION
+### INSTALLATION
 npm i discord.js
