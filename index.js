@@ -1,7 +1,7 @@
 const fs = require("fs");
 const Discord = require("discord.js");
-// let file= '/Code/Bot/jsons/stats.json';
-// let data= require(file);
+let file = "/Code/Bot/jsons/stats.json";
+let data = require(file);
 const { prefix, token, giphyToken } = require("./config.json");
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -14,7 +14,11 @@ for (const file of commandFiles) {
 }
 
 function catchErr(err, message) {
-  console.log(err);
+  //172843767408230400
+  client.users.cache
+    .get("172843767408230400")
+    .send(`There was an error at ${message.channel} at guild ${message.guild}`);
+  client.users.cache.get("172843767408230400").send(`error: ${err}`);
 }
 
 //message command
@@ -38,6 +42,41 @@ client.on("message", message => {
       //delete wrong pokemon
       message.delete({ timeout: 2000 });
       console.log("test wrong pkmn");
+    }
+  } catch (error) {
+    catchErr(error, message);
+    message.reply("there was an error trying to execute that command!");
+  }
+
+  //count messages
+  try {
+    //count user messages
+    if (data) {
+      let found = false;
+      for (let i = 0; i < data.stats.length; i++) {
+        if (message.author.username == data.stats[i].user) {
+          data.stats[i].messages++;
+          found = true;
+          file = JSON.stringify(data);
+          let fs = require("fs");
+          fs.writeFile("/Code/Bot/jsons/stats.json", file, "utf8", function x(
+            callback
+          ) {});
+        }
+      }
+      if (found == false) {
+        data.stats.push({
+          user: `${message.author.username}`,
+          messages: 1
+        });
+      } else {
+        found = false;
+      }
+      file = JSON.stringify(data);
+      let fs = require("fs");
+      fs.writeFile("/Code/Bot/jsons/stats.json", file, "utf8", function x(
+        callback
+      ) {});
     }
   } catch (error) {
     catchErr(error, message);
